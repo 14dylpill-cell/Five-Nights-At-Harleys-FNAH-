@@ -11,7 +11,7 @@ body {
 }
 
 button {
-    background: #151515;
+    background: #111;
     color: white;
     border: 2px solid #777;
     padding: 12px 18px;
@@ -27,81 +27,79 @@ button:hover {
     display: none !important;
 }
 
+
 /* =========================
-   MAIN MENU
+   MENU
 ========================= */
 
 #menu {
-    position: absolute;
+    position: fixed;
     inset: 0;
-
     background:
-        radial-gradient(circle, #292929 0%, #090909 55%, #000 100%);
-
+        radial-gradient(circle, #292929, #080808 65%, #000);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
     text-align: center;
 }
 
 #menu h1 {
     font-size: clamp(45px, 8vw, 90px);
     line-height: .9;
-    margin: 0 0 30px;
-
-    text-shadow:
-        4px 4px 0 #000,
-        0 0 20px #555;
+    margin: 0 0 25px;
+    text-shadow: 4px 4px #000;
 }
 
 #menu h2 {
     color: #aaa;
-    margin-bottom: 25px;
 }
 
 #menu p {
     color: #777;
 }
 
+
 /* =========================
    OFFICE
 ========================= */
 
 #office {
-    position: absolute;
+    position: fixed;
     inset: 0;
 }
 
-.wall {
+.officeWall {
     position: absolute;
     inset: 0;
 
     background:
         radial-gradient(
             circle at center,
-            #303030 0%,
-            #151515 50%,
+            #343434 0%,
+            #171717 45%,
             #050505 100%
         );
 }
 
-/* HALLWAYS */
+
+/* =========================
+   HALLWAYS
+========================= */
 
 .hall {
     position: absolute;
     top: 0;
 
-    width: 17%;
+    width: 18%;
     height: 100%;
 
     background:
         linear-gradient(
             90deg,
-            #030303,
-            #292929,
-            #060606
+            #020202,
+            #252525,
+            #050505
         );
 
     z-index: 2;
@@ -115,17 +113,84 @@ button:hover {
     right: 0;
 }
 
-/* POSTER */
+
+/* =========================
+   HARLEY IN HALL
+========================= */
+
+.hallHarley {
+    position: absolute;
+
+    width: 70px;
+    height: 150px;
+
+    top: 42%;
+
+    background:
+        linear-gradient(
+            #222 0 30%,
+            #111 30% 100%
+        );
+
+    border-radius: 40px 40px 15px 15px;
+
+    box-shadow:
+        0 0 20px #000;
+}
+
+.leftHall .hallHarley {
+    right: 25px;
+}
+
+.rightHall .hallHarley {
+    left: 25px;
+}
+
+
+/* EYES */
+
+.hallHarley::before,
+.hallHarley::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 12px;
+    height: 12px;
+
+    background: white;
+
+    border-radius: 50%;
+
+    top: 30px;
+
+    box-shadow:
+        0 0 12px white;
+}
+
+.hallHarley::before {
+    left: 17px;
+}
+
+.hallHarley::after {
+    right: 17px;
+}
+
+
+/* =========================
+   POSTER
+========================= */
 
 .poster {
     position: absolute;
 
-    top: 13%;
+    top: 12%;
     left: 50%;
 
     transform: translateX(-50%);
 
-    width: 230px;
+    width: 240px;
     height: 150px;
 
     background: #181818;
@@ -152,27 +217,55 @@ button:hover {
     color: #888;
 }
 
-/* DESK */
+
+/* =========================
+   DESK
+========================= */
 
 .desk {
     position: absolute;
 
     bottom: 0;
-    left: 22%;
+    left: 20%;
 
-    width: 56%;
+    width: 60%;
     height: 25%;
 
     background:
         linear-gradient(
-            #333,
+            #3a3a3a,
             #111
         );
 
     border-top: 8px solid #555;
 
-    z-index: 4;
+    z-index: 5;
 }
+
+.computer {
+    position: absolute;
+
+    width: 150px;
+    height: 80px;
+
+    left: 50%;
+    top: -85px;
+
+    transform: translateX(-50%);
+
+    background: #080808;
+
+    border: 6px solid #222;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #4caf50;
+
+    font-size: 12px;
+}
+
 
 /* =========================
    DOORS
@@ -183,20 +276,18 @@ button:hover {
 
     top: 0;
 
-    width: 17%;
+    width: 18%;
     height: 100%;
 
     background:
         repeating-linear-gradient(
-            #333 0px,
-            #333 24px,
-            #222 25px,
-            #222 48px
+            #383838 0 25px,
+            #222 26px 50px
         );
 
     z-index: 10;
 
-    transition: transform .2s;
+    transition: .2s;
 }
 
 .leftDoor {
@@ -204,7 +295,7 @@ button:hover {
 
     transform: translateX(-100%);
 
-    border-right: 6px solid #555;
+    border-right: 6px solid #666;
 }
 
 .rightDoor {
@@ -212,12 +303,13 @@ button:hover {
 
     transform: translateX(100%);
 
-    border-left: 6px solid #555;
+    border-left: 6px solid #666;
 }
 
 .door.closed {
     transform: translateX(0);
 }
+
 
 /* =========================
    HUD
@@ -233,246 +325,12 @@ button:hover {
 
     text-align: right;
 
-    font-size: 19px;
+    font-size: 18px;
 
-    text-shadow:
-        2px 2px 5px black;
+    text-shadow: 2px 2px 5px black;
 }
 
 .hud strong {
     display: block;
 
     font-size: 32px;
-
-    margin: 3px 0;
-}
-
-/* =========================
-   CONTROL BUTTONS
-========================= */
-
-.control {
-    position: absolute;
-
-    bottom: 22px;
-
-    z-index: 30;
-}
-
-.leftButton {
-    left: 20px;
-}
-
-.rightButton {
-    right: 20px;
-}
-
-.cameraButton {
-    left: 50%;
-
-    transform: translateX(-50%);
-}
-
-/* =========================
-   PHONE CALL
-========================= */
-
-#phoneCall {
-    position: absolute;
-
-    inset: 0;
-
-    background: rgba(0,0,0,.6);
-
-    z-index: 40;
-
-    display: flex;
-
-    align-items: flex-end;
-
-    justify-content: center;
-
-    padding-bottom: 70px;
-}
-
-.phoneBox {
-    width: min(600px, 90vw);
-
-    background: #0b0b0b;
-
-    border: 2px solid #555;
-
-    padding: 20px;
-
-    box-shadow:
-        0 0 30px #000;
-}
-
-.phoneBox h2 {
-    margin-top: 0;
-}
-
-.phoneBox p {
-    color: #bbb;
-
-    line-height: 1.5;
-
-    min-height: 70px;
-}
-
-/* =========================
-   CAMERAS
-========================= */
-
-#cameras {
-    position: absolute;
-
-    inset: 0;
-
-    background: #080808;
-
-    z-index: 60;
-
-    padding: 25px;
-}
-
-.cameraScreen {
-    height: 78%;
-
-    border: 5px solid #555;
-
-    background:
-        radial-gradient(
-            circle,
-            #3b3b3b,
-            #111 75%
-        );
-
-    position: relative;
-
-    overflow: hidden;
-
-    padding: 18px;
-}
-
-.cameraScreen h2 {
-    margin: 0;
-}
-
-/* CAMERA ROOM ICON */
-
-#cameraRoom {
-    position: absolute;
-
-    left: 50%;
-    top: 50%;
-
-    transform:
-        translate(-50%, -50%);
-
-    font-size: 110px;
-}
-
-/* HARLEY */
-
-#harley {
-    position: absolute;
-
-    left: 50%;
-    top: 52%;
-
-    transform:
-        translate(-50%, -50%);
-
-    font-size: 45px;
-
-    font-weight: 900;
-
-    letter-spacing: 4px;
-
-    text-shadow:
-        0 0 15px white;
-}
-
-/* CAMERA DESCRIPTION */
-
-#cameraDescription {
-    position: absolute;
-
-    bottom: 10px;
-    left: 18px;
-
-    color: #aaa;
-}
-
-/* CAMERA MAP */
-
-.cameraMap {
-    position: absolute;
-
-    right: 25px;
-    bottom: 25px;
-
-    width: 245px;
-
-    padding: 8px;
-
-    background: #050505;
-
-    border: 2px solid #777;
-}
-
-.cameraMap button {
-    margin: 3px;
-
-    width: 105px;
-
-    padding: 8px;
-
-    font-size: 12px;
-}
-
-/* LOWER CAMERA */
-
-#closeCameras {
-    position: absolute;
-
-    bottom: 25px;
-    left: 25px;
-}
-
-/* =========================
-   GAME OVER / WIN
-========================= */
-
-#gameOver {
-    position: absolute;
-
-    inset: 0;
-
-    background: #000;
-
-    z-index: 200;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    justify-content: center;
-
-    text-align: center;
-}
-
-#gameOver h1 {
-    font-size: 70px;
-
-    margin: 0 0 15px;
-}
-
-#gameOver p {
-    color: #aaa;
-
-    margin-bottom: 25px;
-}
