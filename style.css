@@ -2,12 +2,15 @@
     box-sizing: border-box;
 }
 
+html,
 body {
     margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
     background: #000;
     color: white;
     font-family: Arial, sans-serif;
-    overflow: hidden;
 }
 
 button {
@@ -35,24 +38,35 @@ button:hover {
 #menu {
     position: fixed;
     inset: 0;
-    background:
-        radial-gradient(circle, #292929, #080808 65%, #000);
+
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+
     text-align: center;
+
+    background:
+        radial-gradient(
+            circle,
+            #292929 0%,
+            #0d0d0d 55%,
+            #000 100%
+        );
 }
 
 #menu h1 {
-    font-size: clamp(45px, 8vw, 90px);
+    font-size: clamp(45px, 9vw, 90px);
     line-height: .9;
     margin: 0 0 25px;
-    text-shadow: 4px 4px #000;
+
+    text-shadow:
+        4px 4px 0 #000;
 }
 
 #menu h2 {
     color: #aaa;
+    margin-bottom: 25px;
 }
 
 #menu p {
@@ -67,17 +81,19 @@ button:hover {
 #office {
     position: fixed;
     inset: 0;
+
+    background: #111;
 }
 
-.officeWall {
+.office-wall {
     position: absolute;
     inset: 0;
 
     background:
         radial-gradient(
-            circle at center,
-            #343434 0%,
-            #171717 45%,
+            ellipse at center,
+            #3a3a3a 0%,
+            #1c1c1c 45%,
             #050505 100%
         );
 }
@@ -89,6 +105,7 @@ button:hover {
 
 .hall {
     position: absolute;
+
     top: 0;
 
     width: 18%;
@@ -98,123 +115,83 @@ button:hover {
         linear-gradient(
             90deg,
             #020202,
-            #252525,
-            #050505
+            #292929,
+            #020202
         );
 
-    z-index: 2;
+    z-index: 4;
 }
 
-.leftHall {
+.left-hall {
     left: 0;
 }
 
-.rightHall {
+.right-hall {
     right: 0;
 }
 
 
 /* =========================
-   HARLEY IN HALL
+   HARLEY
 ========================= */
 
-.hallHarley {
+.harley {
     position: absolute;
 
-    width: 70px;
-    height: 150px;
+    top: 40%;
 
-    top: 42%;
+    width: 75px;
+    height: 160px;
 
     background:
         linear-gradient(
-            #222 0 30%,
-            #111 30% 100%
+            #222 0 38%,
+            #111 38% 100%
         );
 
-    border-radius: 40px 40px 15px 15px;
+    border-radius:
+        45px
+        45px
+        15px
+        15px;
 
     box-shadow:
-        0 0 20px #000;
+        0 0 25px #000;
 }
 
-.leftHall .hallHarley {
+.left-hall .harley {
     right: 25px;
 }
 
-.rightHall .hallHarley {
+.right-hall .harley {
     left: 25px;
 }
 
-
-/* EYES */
-
-.hallHarley::before,
-.hallHarley::after {
-
+.harley::before,
+.harley::after {
     content: "";
 
     position: absolute;
 
-    width: 12px;
-    height: 12px;
+    top: 30px;
 
-    background: white;
+    width: 13px;
+    height: 13px;
 
     border-radius: 50%;
 
-    top: 30px;
+    background: white;
 
     box-shadow:
-        0 0 12px white;
+        0 0 15px white;
 }
 
-.hallHarley::before {
+.harley::before {
     left: 17px;
 }
 
-.hallHarley::after {
+.harley::after {
     right: 17px;
-}
-
-
-/* =========================
-   POSTER
-========================= */
-
-.poster {
-    position: absolute;
-
-    top: 12%;
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    width: 240px;
-    height: 150px;
-
-    background: #181818;
-
-    border: 5px solid #555;
-
-    text-align: center;
-
-    padding-top: 35px;
-
-    font-size: 28px;
-    font-weight: bold;
-
-    z-index: 3;
-}
-
-.poster small {
-    display: block;
-
-    margin-top: 12px;
-
-    font-size: 11px;
-
-    color: #888;
 }
 
 
@@ -225,45 +202,21 @@ button:hover {
 .desk {
     position: absolute;
 
+    left: 18%;
     bottom: 0;
-    left: 20%;
 
-    width: 60%;
+    width: 64%;
     height: 25%;
 
     background:
         linear-gradient(
-            #3a3a3a,
+            #444,
             #111
         );
 
-    border-top: 8px solid #555;
+    border-top: 7px solid #666;
 
     z-index: 5;
-}
-
-.computer {
-    position: absolute;
-
-    width: 150px;
-    height: 80px;
-
-    left: 50%;
-    top: -85px;
-
-    transform: translateX(-50%);
-
-    background: #080808;
-
-    border: 6px solid #222;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    color: #4caf50;
-
-    font-size: 12px;
 }
 
 
@@ -281,33 +234,39 @@ button:hover {
 
     background:
         repeating-linear-gradient(
-            #383838 0 25px,
+            #3c3c3c 0 25px,
             #222 26px 50px
         );
 
-    z-index: 10;
+    z-index: 15;
 
-    transition: .2s;
+    transition:
+        transform .2s ease;
 }
 
-.leftDoor {
+.left-door {
     left: 0;
 
-    transform: translateX(-100%);
+    transform:
+        translateX(-100%);
 
-    border-right: 6px solid #666;
+    border-right:
+        6px solid #666;
 }
 
-.rightDoor {
+.right-door {
     right: 0;
 
-    transform: translateX(100%);
+    transform:
+        translateX(100%);
 
-    border-left: 6px solid #666;
+    border-left:
+        6px solid #666;
 }
 
 .door.closed {
-    transform: translateX(0);
+    transform:
+        translateX(0);
 }
 
 
@@ -327,10 +286,616 @@ button:hover {
 
     font-size: 18px;
 
-    text-shadow: 2px 2px 5px black;
+    text-shadow:
+        2px 2px 5px black;
 }
 
 .hud strong {
     display: block;
 
     font-size: 32px;
+
+    margin: 3px 0;
+}
+
+
+/* =========================
+   CONTROLS
+========================= */
+
+.controls {
+    position: absolute;
+
+    bottom: 20px;
+
+    z-index: 40;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.left-controls {
+    left: 20px;
+}
+
+.right-controls {
+    right: 20px;
+}
+
+.camera-button {
+    position: absolute;
+
+    left: 50%;
+    bottom: 20px;
+
+    transform:
+        translateX(-50%);
+
+    z-index: 40;
+}
+
+
+/* =========================
+   LIGHT EFFECT
+========================= */
+
+.lightOn {
+    filter:
+        brightness(1.7);
+}
+
+.lightOn::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(255,255,220,.35),
+            transparent 65%
+        );
+
+    pointer-events: none;
+}
+
+
+/* =========================
+   PHONE CALL
+========================= */
+
+#phone {
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        rgba(0,0,0,.7);
+
+    z-index: 100;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: center;
+
+    padding-bottom: 65px;
+}
+
+.phone-box {
+    width: min(600px, 90vw);
+
+    padding: 20px;
+
+    background: #0a0a0a;
+
+    border:
+        2px solid #555;
+
+    box-shadow:
+        0 0 30px #000;
+}
+
+.phone-box p {
+    min-height: 65px;
+
+    color: #bbb;
+
+    line-height: 1.5;
+}
+
+
+/* =========================
+   CAMERA SCREEN
+========================= */
+
+#cameraScreen {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 200;
+
+    padding: 20px;
+
+    background: #080808;
+}
+
+.camera-screen {
+    height: 80%;
+
+    position: relative;
+
+    overflow: hidden;
+
+    border:
+        5px solid #555;
+
+    background: #181818;
+}
+
+.camera-title {
+    position: absolute;
+
+    top: 15px;
+    left: 18px;
+
+    z-index: 20;
+
+    font-size: 20px;
+
+    text-shadow:
+        2px 2px 4px black;
+}
+
+
+/* =========================
+   ROOMS
+========================= */
+
+.camera-room {
+    position: absolute;
+
+    inset: 0;
+
+    background: #222;
+}
+
+.room-wall {
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #292929 0 80px,
+            #242424 81px 82px
+        );
+}
+
+.room-floor {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 30%;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #151515 0 50px,
+            #202020 51px 100px
+        );
+}
+
+
+/* =========================
+   LIVING ROOM
+========================= */
+
+.couch {
+    position: absolute;
+
+    left: 10%;
+    bottom: 25%;
+
+    width: 40%;
+    height: 21%;
+
+    background: #3c3c3c;
+
+    border-radius:
+        15px 15px 5px 5px;
+}
+
+.table {
+    position: absolute;
+
+    right: 15%;
+    bottom: 27%;
+
+    width: 18%;
+    height: 8%;
+
+    background: #494949;
+}
+
+.lamp {
+    position: absolute;
+
+    right: 20%;
+    bottom: 34%;
+
+    width: 15px;
+    height: 30%;
+
+    background: #333;
+}
+
+
+/* =========================
+   BEDROOM
+========================= */
+
+.cam3 .room-wall {
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #303030 0 100px,
+            #282828 101px 102px
+        );
+}
+
+.bed {
+    position: absolute;
+
+    left: 18%;
+    bottom: 23%;
+
+    width: 58%;
+    height: 25%;
+
+    background: #444;
+
+    border-radius: 12px;
+}
+
+
+/* =========================
+   KITCHEN
+========================= */
+
+.cam2 .counter {
+    display: block;
+
+    position: absolute;
+
+    left: 10%;
+    bottom: 25%;
+
+    width: 70%;
+    height: 17%;
+
+    background: #414141;
+}
+
+.cam2 .fridge {
+    display: block;
+
+    position: absolute;
+
+    right: 10%;
+    bottom: 25%;
+
+    width: 18%;
+    height: 45%;
+
+    background: #3b3b3b;
+
+    border:
+        4px solid #222;
+}
+
+
+/* =========================
+   CAMERA HARLEY
+========================= */
+
+.camera-harley {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 95px;
+    height: 195px;
+
+    transform:
+        translate(-50%, -50%);
+
+    z-index: 50;
+
+    animation:
+        breathing 1.5s infinite;
+}
+
+.camera-head {
+    position: absolute;
+
+    top: 0;
+    left: 3px;
+
+    width: 89px;
+    height: 89px;
+
+    background: #202020;
+
+    border:
+        4px solid #0c0c0c;
+
+    border-radius: 50%;
+}
+
+.camera-body {
+    position: absolute;
+
+    top: 78px;
+    left: 10px;
+
+    width: 75px;
+    height: 115px;
+
+    background: #151515;
+
+    border-radius:
+        35px 35px 10px 10px;
+}
+
+.camera-eye {
+    position: absolute;
+
+    top: 32px;
+
+    width: 13px;
+    height: 13px;
+
+    background: white;
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 15px white;
+}
+
+.eye1 {
+    left: 21px;
+}
+
+.eye2 {
+    right: 21px;
+}
+
+@keyframes breathing {
+
+    50% {
+        transform:
+            translate(-50%, -50%)
+            scale(1.04);
+    }
+}
+
+
+/* =========================
+   CAMERA STATIC
+========================= */
+
+#cameraScreen::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity: .09;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            white 0 1px,
+            transparent 1px 5px
+        );
+
+    animation:
+        staticMove .1s infinite;
+}
+
+@keyframes staticMove {
+
+    to {
+        transform:
+            translateY(5px);
+    }
+}
+
+
+/* =========================
+   CAMERA MAP
+========================= */
+
+.camera-map {
+    position: absolute;
+
+    right: 20px;
+    bottom: 20px;
+
+    width: 245px;
+
+    padding: 8px;
+
+    background: #050505;
+
+    border:
+        2px solid #777;
+
+    z-index: 100;
+}
+
+.camera-map button {
+    width: 105px;
+
+    margin: 3px;
+
+    padding: 9px;
+
+    font-size: 12px;
+}
+
+.close-camera {
+    position: absolute;
+
+    left: 20px;
+    bottom: 20px;
+
+    z-index: 100;
+}
+
+
+/* =========================
+   JUMPSCARE
+========================= */
+
+#jumpscare {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 500;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    background: #000;
+
+    animation:
+        scareFlash .1s infinite;
+}
+
+.scare {
+    position: relative;
+
+    width: min(65vw, 520px);
+    height: min(75vh, 600px);
+
+    background: #242424;
+
+    border-radius: 48%;
+
+    box-shadow:
+        0 0 80px white;
+
+    animation:
+        scareZoom .2s infinite alternate;
+}
+
+.scare-eye {
+    position: absolute;
+
+    top: 23%;
+
+    width: 80px;
+    height: 80px;
+
+    background: white;
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 35px white;
+}
+
+.eye-left {
+    left: 18%;
+}
+
+.eye-right {
+    right: 18%;
+}
+
+.scare-mouth {
+    position: absolute;
+
+    left: 18%;
+    right: 18%;
+    bottom: 13%;
+
+    height: 28%;
+
+    background: #050505;
+
+    border-radius: 50%;
+}
+
+@keyframes scareZoom {
+
+    to {
+        transform:
+            scale(1.13);
+    }
+}
+
+@keyframes scareFlash {
+
+    50% {
+        background: #222;
+    }
+}
+
+
+/* =========================
+   GAME OVER
+========================= */
+
+#gameOver {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 600;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    text-align: center;
+
+    background: #000;
+}
+
+#gameOver h1 {
+    font-size: 70px;
+
+    margin-bottom: 10px;
+}
+
+#gameOver p {
+    color: #aaa;
+
+    margin-bottom: 25px;
+}
