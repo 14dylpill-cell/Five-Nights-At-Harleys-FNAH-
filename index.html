@@ -1,174 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Five Nights at Harley's</title>
-
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- =========================
-     MAIN MENU
-========================= -->
-
 <div id="menu">
-
-    <div class="menuNoise"></div>
-
-    <h1>
-        FIVE NIGHTS<br>
-        AT HARLEY'S
-    </h1>
-
+    <h1>FIVE NIGHTS<br>AT HARLEY'S</h1>
     <h2>NIGHT 1</h2>
 
-    <button id="startButton">
-        START NIGHT
-    </button>
+    <button id="startButton">START NIGHT</button>
 
-    <p>
-        Survive until 6 AM.
-    </p>
-
+    <p>Survive until 6 AM.</p>
 </div>
 
 
-<!-- =========================
-     OFFICE
-========================= -->
+<div id="game" class="hidden">
 
-<div id="office" class="hidden">
+    <div id="office">
 
-    <div class="officeWall"></div>
+        <div class="office-wall"></div>
 
-    <!-- LEFT HALL -->
-
-    <div id="leftHall" class="hall leftHall">
-
-        <div id="leftHarley"
-             class="hallHarley hidden">
+        <div id="leftHall" class="hall left-hall">
+            <div id="leftHarley" class="harley hidden"></div>
         </div>
 
-    </div>
-
-
-    <!-- RIGHT HALL -->
-
-    <div id="rightHall" class="hall rightHall">
-
-        <div id="rightHarley"
-             class="hallHarley hidden">
+        <div id="rightHall" class="hall right-hall">
+            <div id="rightHarley" class="harley hidden"></div>
         </div>
 
-    </div>
+        <div class="desk"></div>
 
+        <div id="leftDoor" class="door left-door"></div>
+        <div id="rightDoor" class="door right-door"></div>
 
-    <!-- OFFICE DECOR -->
-
-    <div class="poster">
-        HARLEY'S
-        <small>
-            HAVE A GREAT NIGHT
-        </small>
-    </div>
-
-
-    <div class="desk">
-
-        <div class="computer">
-            SECURITY
+        <div class="hud">
+            <div>NIGHT 1</div>
+            <strong id="time">12 AM</strong>
+            <div id="power">POWER: 100%</div>
         </div>
 
-    </div>
-
-
-    <!-- DOORS -->
-
-    <div id="leftDoor"
-         class="door leftDoor">
-    </div>
-
-    <div id="rightDoor"
-         class="door rightDoor">
-    </div>
-
-
-    <!-- HUD -->
-
-    <div class="hud">
-
-        <div>
-            NIGHT 1
+        <div class="controls left-controls">
+            <button id="leftLight">LIGHT</button>
+            <button id="leftDoorButton">DOOR</button>
         </div>
 
-        <strong id="clock">
-            12 AM
-        </strong>
-
-        <div id="power">
-            POWER 100%
+        <div class="controls right-controls">
+            <button id="rightLight">LIGHT</button>
+            <button id="rightDoorButton">DOOR</button>
         </div>
 
-    </div>
-
-
-    <!-- LEFT CONTROLS -->
-
-    <div class="sideControls leftControls">
-
-        <button id="leftLightButton">
-            💡 LIGHT
-        </button>
-
-        <button id="leftDoorButton">
-            🚪 DOOR
+        <button id="cameraButton" class="camera-button">
+            CAMERAS
         </button>
 
     </div>
 
 
-    <!-- RIGHT CONTROLS -->
+    <div id="cameraScreen" class="hidden">
 
-    <div class="sideControls rightControls">
+        <div class="camera-title" id="cameraTitle">
+            CAM 1 — LIVING ROOM
+        </div>
 
-        <button id="rightLightButton">
-            💡 LIGHT
-        </button>
+        <div id="cameraRoom" class="camera-room">
 
-        <button id="rightDoorButton">
-            🚪 DOOR
+            <div class="room-wall"></div>
+            <div class="room-floor"></div>
+
+            <div class="couch"></div>
+            <div class="table"></div>
+            <div class="lamp"></div>
+
+            <div id="cameraHarley" class="camera-harley hidden">
+                <div class="camera-head"></div>
+                <div class="camera-body"></div>
+                <div class="camera-eye eye1"></div>
+                <div class="camera-eye eye2"></div>
+            </div>
+
+        </div>
+
+
+        <div class="camera-map">
+
+            <button data-camera="1">
+                CAM 1
+            </button>
+
+            <button data-camera="2">
+                CAM 2
+            </button>
+
+            <button data-camera="3">
+                CAM 3
+            </button>
+
+            <button data-camera="4">
+                CAM 4
+            </button>
+
+            <button data-camera="5">
+                CAM 5
+            </button>
+
+        </div>
+
+
+        <button id="closeCamera" class="close-camera">
+            LOWER CAMERA
         </button>
 
     </div>
 
 
-    <!-- CAMERA BUTTON -->
+    <div id="phone" class="hidden">
 
-    <button id="cameraButton"
-            class="cameraButton">
+        <div class="phone-box">
 
-        📹 CAMERAS
+            <h2>INCOMING CALL</h2>
 
-    </button>
-
-
-    <!-- PHONE CALL -->
-
-    <div id="phoneCall">
-
-        <div class="phoneBox">
-
-            <h2>
-                INCOMING CALL
-            </h2>
-
-            <p id="callText">
-            </p>
+            <p id="phoneText"></p>
 
             <button id="skipCall">
                 SKIP
@@ -181,133 +137,27 @@
 </div>
 
 
-<!-- =========================
-     CAMERA SYSTEM
-========================= -->
+<div id="jumpscare" class="hidden">
 
-<div id="cameras"
-     class="hidden">
+    <div class="scare">
 
-    <div id="cameraStatic">
-    </div>
+        <div class="scare-eye eye-left"></div>
+        <div class="scare-eye eye-right"></div>
 
-
-    <div class="cameraScreen">
-
-        <div id="cameraName">
-            CAM 1 — LIVING ROOM
-        </div>
-
-
-        <!-- ROOM VISUAL -->
-
-        <div id="cameraRoom"
-             class="room">
-
-            <div class="roomFloor"></div>
-
-            <div class="roomWall"></div>
-
-            <div class="couch">
-            </div>
-
-            <div class="table">
-            </div>
-
-            <div class="lamp">
-            </div>
-
-        </div>
-
-
-        <!-- HARLEY -->
-
-        <div id="cameraHarley"
-             class="cameraHarley hidden">
-
-            <div class="harleyHead"></div>
-
-            <div class="harleyBody"></div>
-
-            <div class="harleyEyes">
-                • •
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- CAMERA MAP -->
-
-    <div class="cameraMap">
-
-        <button onclick="changeCamera(1)">
-            CAM 1
-        </button>
-
-        <button onclick="changeCamera(2)">
-            CAM 2
-        </button>
-
-        <button onclick="changeCamera(3)">
-            CAM 3
-        </button>
-
-        <button onclick="changeCamera(4)">
-            CAM 4
-        </button>
-
-        <button onclick="changeCamera(5)">
-            CAM 5
-        </button>
-
-    </div>
-
-
-    <button id="closeCameras">
-
-        LOWER CAMERA
-
-    </button>
-
-</div>
-
-
-<!-- =========================
-     JUMPSCARE
-========================= -->
-
-<div id="jumpscare"
-     class="hidden">
-
-    <div class="jumpscareFace">
-
-        <div class="eye leftEye"></div>
-
-        <div class="eye rightEye"></div>
-
-        <div class="mouth">
-        </div>
+        <div class="scare-mouth"></div>
 
     </div>
 
 </div>
 
 
-<!-- =========================
-     GAME OVER
-========================= -->
-
-<div id="gameOver"
-     class="hidden">
+<div id="gameOver" class="hidden">
 
     <h1 id="gameOverTitle">
         GAME OVER
     </h1>
 
-    <p id="gameOverText">
-    </p>
+    <p id="gameOverText"></p>
 
     <button onclick="location.reload()">
         TRY AGAIN
@@ -319,5 +169,4 @@
 <script src="game.js"></script>
 
 </body>
-
 </html>
