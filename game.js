@@ -1,14 +1,13 @@
-// ================================
-// FIVE NIGHTS AT HARLEY'S
-// GAME ENGINE
-// ================================
+// ==========================================
+// FIVE NIGHTS AT HARLEY'S — GAME.JS
+// ==========================================
 
 const $ = (id) => document.getElementById(id);
 
 
-// ================================
-// GAME VARIABLES
-// ================================
+// ==========================================
+// GAME STATE
+// ==========================================
 
 let gameRunning = false;
 
@@ -21,6 +20,9 @@ let hour = 0;
 let leftDoorClosed = false;
 let rightDoorClosed = false;
 
+let leftLightOn = false;
+let rightLightOn = false;
+
 let camerasOpen = false;
 
 let currentCamera = 1;
@@ -28,78 +30,74 @@ let currentCamera = 1;
 let harleyPosition = 1;
 
 let gameTimer = null;
-
+let movementTimer = null;
 let callTimer = null;
 
+let callIndex = 0;
 
-// ================================
-// CAMERA ROOMS
-// ================================
+
+// ==========================================
+// ROOMS
+// ==========================================
 
 const rooms = {
 
     1: {
         name: "CAM 1 — LIVING ROOM",
-        icon: "🛋️",
-        description:
-            "The living room. Everything seems normal."
+        description: "Living Room"
     },
 
     2: {
         name: "CAM 2 — KITCHEN",
-        icon: "🍽️",
-        description:
-            "The kitchen. It's completely quiet."
+        description: "Kitchen"
     },
 
     3: {
         name: "CAM 3 — BEDROOM",
-        icon: "🛏️",
-        description:
-            "The bedroom where the sleepover will happen."
+        description: "Bedroom"
     },
 
     4: {
         name: "CAM 4 — LEFT HALL",
-        icon: "🚪",
-        description:
-            "The hallway leading toward the left side of the office."
+        description: "Left Hall"
     },
 
     5: {
         name: "CAM 5 — RIGHT HALL",
-        icon: "🚪",
-        description:
-            "The hallway leading toward the right side of the office."
+        description: "Right Hall"
     }
 
 };
 
 
-// ================================
+// ==========================================
 // PHONE CALL
-// ================================
+// ==========================================
 
 const phoneMessages = [
 
-    "Hey. If you're hearing this, you're on night watch at Harley's.",
+    "Hey... welcome to Harley's.",
 
-    "Your job is pretty simple. Keep an eye on the house and make it to 6 AM.",
+    "You're going to be staying here tonight.",
 
-    "If you survive the night, everyone can have the sleepover.",
+    "Your job is pretty simple: survive until 6 AM.",
 
-    "Check the cameras and watch the hallways.",
+    "Keep an eye on the cameras and watch the hallways.",
 
-    "And whatever you do... don't let Harley reach the office.",
+    "You have doors and lights, but they use power.",
 
-    "Good luck. You're probably going to need it."
+    "If Harley gets to the office while a door is open... well... good luck.",
+
+    "Make it to 6 AM and the sleepover can begin.",
+
+    "I'll talk to you tomorrow. Hopefully."
 
 ];
 
 
-// ================================
-// START GAME
-// ================================
+// ==========================================
+// START
+// ==========================================
 
 $("startButton").onclick = startGame;
 
@@ -120,31 +118,37 @@ function startGame() {
 
     rightDoorClosed = false;
 
+    leftLightOn = false;
+
+    rightLightOn = false;
+
     camerasOpen = false;
 
-
-    // Show office
 
     $("menu").classList.add("hidden");
 
     $("office").classList.remove("hidden");
 
 
-    // Reset doors
-
     $("leftDoor").classList.remove("closed");
 
     $("rightDoor").classList.remove("closed");
 
 
-    // Start phone call
-
     startPhoneCall();
 
 
-    // Start game clock
+    // Main clock
 
     gameTimer = setInterval(gameTick, 1000);
+
+
+    // Harley movement
+
+    movementTimer = setInterval(
+        attemptHarleyMovement,
+        5000
+    );
 
 
     updateUI();
@@ -152,27 +156,27 @@ function startGame() {
 }
 
 
-// ================================
-// PHONE CALL SYSTEM
-// ================================
+// ==========================================
+// PHONE CALL
+// ==========================================
 
 function startPhoneCall() {
 
     $("phoneCall").classList.remove("hidden");
 
-    let messageIndex = 0;
+    callIndex = 0;
 
     $("callText").textContent =
-        phoneMessages[messageIndex];
+        phoneMessages[callIndex];
 
 
     callTimer = setInterval(() => {
 
-        messageIndex++;
+        callIndex++;
 
 
         if (
-            messageIndex >= phoneMessages.length
+            callIndex >= phoneMessages.length
         ) {
 
             finishPhoneCall();
@@ -183,9 +187,9 @@ function startPhoneCall() {
 
 
         $("callText").textContent =
-            phoneMessages[messageIndex];
+            phoneMessages[callIndex];
 
-    }, 3500);
+    }, 3000);
 
 }
 
@@ -203,9 +207,9 @@ function finishPhoneCall() {
 }
 
 
-// ================================
+// ==========================================
 // GAME CLOCK
-// ================================
+// ==========================================
 
 function gameTick() {
 
@@ -216,99 +220,67 @@ function gameTick() {
     seconds++;
 
 
-    /*
-        45 real seconds =
-        1 in-game hour.
-    */
+    // 45 seconds = 1 hour
 
-    hour =
-        Math.min(
-            6,
-            Math.floor(seconds / 45)
-        );
+    hour = Math.min(
+        6,
+        Math.floor(seconds / 45)
+    );
 
 
-    // ============================
-    // POWER DRAIN
-    // ============================
+    // ======================================
+    // POWER
+    // ======================================
 
-    let powerDrain = 0.08;
-
-
-    if (leftDoorClosed) {
-
-        powerDrain += 0.08;
-
-    }
+    let drain = 0.06;
 
 
-    if (rightDoorClosed) {
-
-        powerDrain += 0.08;
-
-    }
+    if (leftDoorClosed)
+        drain += 0.08;
 
 
-    if (camerasOpen) {
-
-        powerDrain += 0.05;
-
-    }
+    if (rightDoorClosed)
+        drain += 0.08;
 
 
-    power -= powerDrain;
+    if (leftLightOn)
+        drain += 0.05;
 
 
-    if (power < 0) {
+    if (rightLightOn)
+        drain += 0.05;
 
+
+    if (camerasOpen)
+        drain += 0.04;
+
+
+    power -= drain;
+
+
+    if (power < 0)
         power = 0;
-
-    }
-
-
-    // ============================
-    // HARLEY MOVEMENT
-    // ============================
-
-    if (seconds > 8) {
-
-        let movementChance =
-            0.12 + hour * 0.015;
-
-
-        if (
-            Math.random() <
-            movementChance
-        ) {
-
-            moveHarley();
-
-        }
-
-    }
 
 
     updateUI();
 
 
-    // ============================
-    // POWER OUT
-    // ============================
+    // ======================================
+    // POWER FAILURE
+    // ======================================
 
     if (power <= 0) {
 
-        gameOver(
-            "THE POWER RAN OUT."
-        );
+        powerOut();
 
         return;
 
     }
 
 
-    // ============================
+    // ======================================
     // 6 AM
-    // ============================
+    // ======================================
 
     if (hour >= 6) {
 
@@ -319,47 +291,170 @@ function gameTick() {
 }
 
 
-// ================================
-// UPDATE UI
-// ================================
+// ==========================================
+// HARLEY MOVEMENT
+// ==========================================
 
-function updateUI() {
+function attemptHarleyMovement() {
 
-    let displayHour;
+    if (!gameRunning)
+        return;
 
 
-    if (hour === 0) {
+    /*
+        Harley gets more aggressive
+        as the night progresses.
+    */
 
-        displayHour = "12";
 
-    } else {
+    let chance =
+        0.35 + (hour * 0.07);
 
-        displayHour = hour;
+
+    if (
+        Math.random() > chance
+    ) {
+
+        return;
 
     }
 
 
-    $("clock").textContent =
-        displayHour + " AM";
-
-
-    $("power").textContent =
-        "POWER " +
-        Math.floor(power) +
-        "%";
-
-
-    updateCamera();
+    moveHarley();
 
 }
 
 
-// ================================
-// LEFT DOOR
-// ================================
+// ==========================================
+// MOVE HARLEY
+// ==========================================
 
-$("leftButton").onclick =
+function moveHarley() {
+
+    // Living Room → Kitchen
+
+    if (harleyPosition === 1) {
+
+        harleyPosition = 2;
+
+        updateCamera();
+
+        playSound("move");
+
+        return;
+
+    }
+
+
+    // Kitchen → Bedroom
+
+    if (harleyPosition === 2) {
+
+        harleyPosition = 3;
+
+        updateCamera();
+
+        playSound("move");
+
+        return;
+
+    }
+
+
+    // Bedroom → hallway
+
+    if (harleyPosition === 3) {
+
+        if (
+            Math.random() < 0.5
+        ) {
+
+            harleyPosition = 4;
+
+        } else {
+
+            harleyPosition = 5;
+
+        }
+
+
+        updateCamera();
+
+        playSound("move");
+
+        return;
+
+    }
+
+
+    // ======================================
+    // LEFT HALL
+    // ======================================
+
+    if (harleyPosition === 4) {
+
+        if (leftDoorClosed) {
+
+            // Door blocks Harley
+
+            harleyPosition = 2;
+
+            playSound("doorBlocked");
+
+        } else {
+
+            jumpscare(
+                "Harley got through the left door."
+            );
+
+        }
+
+        updateCamera();
+
+        return;
+
+    }
+
+
+    // ======================================
+    // RIGHT HALL
+    // ======================================
+
+    if (harleyPosition === 5) {
+
+        if (rightDoorClosed) {
+
+            // Door blocks Harley
+
+            harleyPosition = 2;
+
+            playSound("doorBlocked");
+
+        } else {
+
+            jumpscare(
+                "Harley got through the right door."
+            );
+
+        }
+
+        updateCamera();
+
+    }
+
+}
+
+
+// ==========================================
+// DOORS
+// ==========================================
+
+$("leftDoorButton").onclick =
     toggleLeftDoor;
+
+
+$("rightDoorButton").onclick =
+    toggleRightDoor;
 
 
 function toggleLeftDoor() {
@@ -380,15 +475,10 @@ function toggleLeftDoor() {
         leftDoorClosed
     );
 
+
+    playSound("door");
+
 }
-
-
-// ================================
-// RIGHT DOOR
-// ================================
-
-$("rightButton").onclick =
-    toggleRightDoor;
 
 
 function toggleRightDoor() {
@@ -409,22 +499,25 @@ function toggleRightDoor() {
         rightDoorClosed
     );
 
+
+    playSound("door");
+
 }
 
 
-// ================================
-// CAMERA SYSTEM
-// ================================
+// ==========================================
+// LIGHTS
+// ==========================================
 
-$("cameraButton").onclick =
-    openCameras;
-
-
-$("closeCameras").onclick =
-    closeCameras;
+$("leftLightButton").onclick =
+    toggleLeftLight;
 
 
-function openCameras() {
+$("rightLightButton").onclick =
+    toggleRightLight;
+
+
+function toggleLeftLight() {
 
     if (
         !gameRunning ||
@@ -433,302 +526,60 @@ function openCameras() {
         return;
 
 
-    camerasOpen = true;
+    leftLightOn =
+        !leftLightOn;
 
 
-    $("cameras").classList.remove(
-        "hidden"
+    $("leftHall").classList.toggle(
+        "lightOn",
+        leftLightOn
     );
 
 
-    updateCamera();
-
-}
-
-
-function closeCameras() {
-
-    camerasOpen = false;
-
-
-    $("cameras").classList.add(
-        "hidden"
-    );
-
-}
-
-
-// ================================
-// CHANGE CAMERA
-// ================================
-
-function changeCamera(number) {
-
-    if (!gameRunning)
-        return;
-
-
-    currentCamera = number;
-
-
-    updateCamera();
-
-}
-
-
-// ================================
-// UPDATE CAMERA
-// ================================
-
-function updateCamera() {
-
-    const room =
-        rooms[currentCamera];
-
-
-    $("cameraName").textContent =
-        room.name;
-
-
-    $("cameraRoom").textContent =
-        room.icon;
-
-
-    $("cameraDescription").textContent =
-        room.description;
-
-
-    // Show Harley if he's there
+    // Show Harley
 
     if (
-        harleyPosition ===
-        currentCamera
+        leftLightOn &&
+        harleyPosition === 4
     ) {
 
-        $("harley").classList.remove(
+        $("leftHarley").classList.remove(
             "hidden"
         );
 
     } else {
 
-        $("harley").classList.add(
+        $("leftHarley").classList.add(
             "hidden"
         );
 
     }
 
-}
 
-
-// ================================
-// HARLEY AI
-// ================================
-
-function moveHarley() {
-
-    /*
-        Harley's path:
-
-        Living Room
-             ↓
-        Kitchen
-             ↓
-        Bedroom
-          ↙   ↘
-      Left     Right
-      Hall      Hall
-       ↓          ↓
-    Office      Office
-    */
-
-
-    // Living Room → Kitchen
-
-    if (harleyPosition < 2) {
-
-        harleyPosition = 2;
-
-        updateCamera();
-
-        return;
-
-    }
-
-
-    // Kitchen → Bedroom
-
-    if (harleyPosition === 2) {
-
-        harleyPosition = 3;
-
-        updateCamera();
-
-        return;
-
-    }
-
-
-    // Bedroom → random hallway
-
-    if (harleyPosition === 3) {
-
-        if (
-            Math.random() < 0.5
-        ) {
-
-            harleyPosition = 4;
-
-        } else {
-
-            harleyPosition = 5;
-
-        }
-
-
-        updateCamera();
-
-        return;
-
-    }
-
-
-    // LEFT HALL
-
-    if (harleyPosition === 4) {
-
-        if (leftDoorClosed) {
-
-            // Door blocks Harley
-
-            harleyPosition = 2;
-
-        } else {
-
-            gameOver(
-                "HARLEY GOT THROUGH THE LEFT SIDE."
-            );
-
-        }
-
-
-        updateCamera();
-
-        return;
-
-    }
-
-
-    // RIGHT HALL
-
-    if (harleyPosition === 5) {
-
-        if (rightDoorClosed) {
-
-            // Door blocks Harley
-
-            harleyPosition = 2;
-
-        } else {
-
-            gameOver(
-                "HARLEY GOT THROUGH THE RIGHT SIDE."
-            );
-
-        }
-
-
-        updateCamera();
-
-    }
+    playSound("light");
 
 }
 
 
-// ================================
-// GAME OVER
-// ================================
+function toggleRightLight() {
 
-function gameOver(reason) {
-
-    gameRunning = false;
-
-
-    clearInterval(gameTimer);
-
-    clearInterval(callTimer);
+    if (
+        !gameRunning ||
+        power <= 0
+    )
+        return;
 
 
-    $("office").classList.add(
-        "hidden"
+    rightLightOn =
+        !rightLightOn;
+
+
+    $("rightHall").classList.toggle(
+        "lightOn",
+        rightLightOn
     );
 
 
-    $("cameras").classList.add(
-        "hidden"
-    );
-
-
-    $("phoneCall").classList.add(
-        "hidden"
-    );
-
-
-    $("gameOver").classList.remove(
-        "hidden"
-    );
-
-
-    $("gameOverTitle").textContent =
-        "GAME OVER";
-
-
-    $("gameOverText").textContent =
-        reason;
-
-}
-
-
-// ================================
-// WIN
-// ================================
-
-function winGame() {
-
-    gameRunning = false;
-
-
-    clearInterval(gameTimer);
-
-    clearInterval(callTimer);
-
-
-    $("office").classList.add(
-        "hidden"
-    );
-
-
-    $("cameras").classList.add(
-        "hidden"
-    );
-
-
-    $("gameOver").classList.remove(
-        "hidden"
-    );
-
-
-    $("gameOverTitle").textContent =
-        "6 AM";
-
-
-    $("gameOverText").textContent =
-        "YOU SURVIVED! THE SLEEPOVER CAN BEGIN.";
-
-}
-
-
-// ================================
-// INITIAL UI
-// ================================
-
-updateUI();
+    if (
+        rightLightOn &&
+        harleyPosition
