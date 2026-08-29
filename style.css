@@ -1,0 +1,478 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #000;
+    color: white;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+button {
+    background: #151515;
+    color: white;
+    border: 2px solid #777;
+    padding: 12px 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #333;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* =========================
+   MAIN MENU
+========================= */
+
+#menu {
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(circle, #292929 0%, #090909 55%, #000 100%);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+#menu h1 {
+    font-size: clamp(45px, 8vw, 90px);
+    line-height: .9;
+    margin: 0 0 30px;
+
+    text-shadow:
+        4px 4px 0 #000,
+        0 0 20px #555;
+}
+
+#menu h2 {
+    color: #aaa;
+    margin-bottom: 25px;
+}
+
+#menu p {
+    color: #777;
+}
+
+/* =========================
+   OFFICE
+========================= */
+
+#office {
+    position: absolute;
+    inset: 0;
+}
+
+.wall {
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #303030 0%,
+            #151515 50%,
+            #050505 100%
+        );
+}
+
+/* HALLWAYS */
+
+.hall {
+    position: absolute;
+    top: 0;
+
+    width: 17%;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #030303,
+            #292929,
+            #060606
+        );
+
+    z-index: 2;
+}
+
+.leftHall {
+    left: 0;
+}
+
+.rightHall {
+    right: 0;
+}
+
+/* POSTER */
+
+.poster {
+    position: absolute;
+
+    top: 13%;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: 230px;
+    height: 150px;
+
+    background: #181818;
+
+    border: 5px solid #555;
+
+    text-align: center;
+
+    padding-top: 35px;
+
+    font-size: 28px;
+    font-weight: bold;
+
+    z-index: 3;
+}
+
+.poster small {
+    display: block;
+
+    margin-top: 12px;
+
+    font-size: 11px;
+
+    color: #888;
+}
+
+/* DESK */
+
+.desk {
+    position: absolute;
+
+    bottom: 0;
+    left: 22%;
+
+    width: 56%;
+    height: 25%;
+
+    background:
+        linear-gradient(
+            #333,
+            #111
+        );
+
+    border-top: 8px solid #555;
+
+    z-index: 4;
+}
+
+/* =========================
+   DOORS
+========================= */
+
+.door {
+    position: absolute;
+
+    top: 0;
+
+    width: 17%;
+    height: 100%;
+
+    background:
+        repeating-linear-gradient(
+            #333 0px,
+            #333 24px,
+            #222 25px,
+            #222 48px
+        );
+
+    z-index: 10;
+
+    transition: transform .2s;
+}
+
+.leftDoor {
+    left: 0;
+
+    transform: translateX(-100%);
+
+    border-right: 6px solid #555;
+}
+
+.rightDoor {
+    right: 0;
+
+    transform: translateX(100%);
+
+    border-left: 6px solid #555;
+}
+
+.door.closed {
+    transform: translateX(0);
+}
+
+/* =========================
+   HUD
+========================= */
+
+.hud {
+    position: absolute;
+
+    top: 18px;
+    right: 20px;
+
+    z-index: 30;
+
+    text-align: right;
+
+    font-size: 19px;
+
+    text-shadow:
+        2px 2px 5px black;
+}
+
+.hud strong {
+    display: block;
+
+    font-size: 32px;
+
+    margin: 3px 0;
+}
+
+/* =========================
+   CONTROL BUTTONS
+========================= */
+
+.control {
+    position: absolute;
+
+    bottom: 22px;
+
+    z-index: 30;
+}
+
+.leftButton {
+    left: 20px;
+}
+
+.rightButton {
+    right: 20px;
+}
+
+.cameraButton {
+    left: 50%;
+
+    transform: translateX(-50%);
+}
+
+/* =========================
+   PHONE CALL
+========================= */
+
+#phoneCall {
+    position: absolute;
+
+    inset: 0;
+
+    background: rgba(0,0,0,.6);
+
+    z-index: 40;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: center;
+
+    padding-bottom: 70px;
+}
+
+.phoneBox {
+    width: min(600px, 90vw);
+
+    background: #0b0b0b;
+
+    border: 2px solid #555;
+
+    padding: 20px;
+
+    box-shadow:
+        0 0 30px #000;
+}
+
+.phoneBox h2 {
+    margin-top: 0;
+}
+
+.phoneBox p {
+    color: #bbb;
+
+    line-height: 1.5;
+
+    min-height: 70px;
+}
+
+/* =========================
+   CAMERAS
+========================= */
+
+#cameras {
+    position: absolute;
+
+    inset: 0;
+
+    background: #080808;
+
+    z-index: 60;
+
+    padding: 25px;
+}
+
+.cameraScreen {
+    height: 78%;
+
+    border: 5px solid #555;
+
+    background:
+        radial-gradient(
+            circle,
+            #3b3b3b,
+            #111 75%
+        );
+
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 18px;
+}
+
+.cameraScreen h2 {
+    margin: 0;
+}
+
+/* CAMERA ROOM ICON */
+
+#cameraRoom {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    font-size: 110px;
+}
+
+/* HARLEY */
+
+#harley {
+    position: absolute;
+
+    left: 50%;
+    top: 52%;
+
+    transform:
+        translate(-50%, -50%);
+
+    font-size: 45px;
+
+    font-weight: 900;
+
+    letter-spacing: 4px;
+
+    text-shadow:
+        0 0 15px white;
+}
+
+/* CAMERA DESCRIPTION */
+
+#cameraDescription {
+    position: absolute;
+
+    bottom: 10px;
+    left: 18px;
+
+    color: #aaa;
+}
+
+/* CAMERA MAP */
+
+.cameraMap {
+    position: absolute;
+
+    right: 25px;
+    bottom: 25px;
+
+    width: 245px;
+
+    padding: 8px;
+
+    background: #050505;
+
+    border: 2px solid #777;
+}
+
+.cameraMap button {
+    margin: 3px;
+
+    width: 105px;
+
+    padding: 8px;
+
+    font-size: 12px;
+}
+
+/* LOWER CAMERA */
+
+#closeCameras {
+    position: absolute;
+
+    bottom: 25px;
+    left: 25px;
+}
+
+/* =========================
+   GAME OVER / WIN
+========================= */
+
+#gameOver {
+    position: absolute;
+
+    inset: 0;
+
+    background: #000;
+
+    z-index: 200;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+}
+
+#gameOver h1 {
+    font-size: 70px;
+
+    margin: 0 0 15px;
+}
+
+#gameOver p {
+    color: #aaa;
+
+    margin-bottom: 25px;
+}
