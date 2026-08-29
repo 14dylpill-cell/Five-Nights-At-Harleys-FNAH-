@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Five Nights at Harley's</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div id="menu">
+    <h1>FIVE NIGHTS<br>AT HARLEY'S</h1>
+    <h2>NIGHT 1</h2>
+
+    <button id="startButton">START NIGHT</button>
+
+    <p>Survive until 6 AM to make it to the sleepover.</p>
+</div>
+
+<div id="office" class="hidden">
+
+    <div class="wall"></div>
+
+    <div class="hall leftHall"></div>
+    <div class="hall rightHall"></div>
+
+    <div class="poster">
+        HARLEY'S
+        <small>GOOD LUCK TONIGHT</small>
+    </div>
+
+    <div id="leftDoor" class="door leftDoor"></div>
+    <div id="rightDoor" class="door rightDoor"></div>
+
+    <div class="desk"></div>
+
+    <div class="hud">
+        <div>NIGHT 1</div>
+        <strong id="clock">12 AM</strong>
+        <div id="power">POWER 100%</div>
+    </div>
+
+    <button id="leftButton" class="control leftButton">
+        LEFT DOOR
+    </button>
+
+    <button id="rightButton" class="control rightButton">
+        RIGHT DOOR
+    </button>
+
+    <button id="cameraButton" class="control cameraButton">
+        CAMERAS
+    </button>
+
+    <div id="phoneCall">
+        <div class="phoneBox">
+            <h2>INCOMING CALL</h2>
+            <p id="callText"></p>
+            <button id="skipCall">SKIP</button>
+        </div>
+    </div>
+
+</div>
+
+<div id="cameras" class="hidden">
+
+    <div class="cameraScreen">
+
+        <h2 id="cameraName">
+            CAM 1 — LIVING ROOM
+        </h2>
+
+        <div id="cameraRoom">
+            🛋️
+        </div>
+
+        <div id="harley" class="hidden">
+            HARLEY 👁️
+        </div>
+
+        <p id="cameraDescription"></p>
+
+    </div>
+
+    <div class="cameraMap">
+
+        <button onclick="changeCamera(1)">
+            CAM 1<br>
+            Living Room
+        </button>
+
+        <button onclick="changeCamera(2)">
+            CAM 2<br>
+            Kitchen
+        </button>
+
+        <button onclick="changeCamera(3)">
+            CAM 3<br>
+            Bedroom
+        </button>
+
+        <button onclick="changeCamera(4)">
+            CAM 4<br>
+            Left Hall
+        </button>
+
+        <button onclick="changeCamera(5)">
+            CAM 5<br>
+            Right Hall
+        </button>
+
+    </div>
+
+    <button id="closeCameras">
+        LOWER CAMERA
+    </button>
+
+</div>
+
+<div id="gameOver" class="hidden">
+
+    <h1 id="gameOverTitle">
+        GAME OVER
+    </h1>
+
+    <p id="gameOverText"></p>
+
+    <button onclick="location.reload()">
+        PLAY AGAIN
+    </button>
+
+</div>
+
+<script src="game.js"></script>
+
+</body>
+</html>
