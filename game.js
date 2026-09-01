@@ -1,12 +1,6 @@
-// ============================================
-// FIVE NIGHTS AT HARLEY'S
-// GAME.JS
-// ============================================
+const $ = id => document.getElementById(id);
 
-const $ = (id) => document.getElementById(id);
-
-let gameRunning = false;
-
+let running = false;
 let power = 100;
 let seconds = 0;
 let hour = 0;
@@ -20,1241 +14,1198 @@ let rightLightOn = false;
 let camerasOpen = false;
 let currentCamera = 1;
 
-let harleyPosition = 1;
+let monsterPosition = 1;
+let monsterName = "Mom";
 
-let gameTimer;
-let movementTimer;
+let clockTimer;
+let moveTimer;
 let callTimer;
 
-let callIndex = 0;
 
-
-// ============================================
-// ROOMS
-// ============================================
+/* =========================
+   CAMERA NAMES
+========================= */
 
 const rooms = {
-    1: "CAM 1 — LIVING ROOM",
-    2: "CAM 2 — KITCHEN",
-    3: "CAM 3 — BEDROOM",
-    4: "CAM 4 — LEFT HALL",
-    5: "CAM 5 — RIGHT HALL"
+  1: "CAM 1 — LIVING ROOM",
+  2: "CAM 2 — KITCHEN",
+  3: "CAM 3 — BEDROOM",
+  4: "CAM 4 — LEFT HALL",
+  5: "CAM 5 — RIGHT HALL"
 };
 
 
-// ============================================
-// PHONE CALL
-// ============================================
+/* =========================
+   PHONE CALL
+========================= */
 
-const callMessages = [
-
-    "Hey... welcome to Harley's.",
-
-    "You're staying here tonight.",
-
-    "Your only job is to make it to 6 AM.",
-
-    "Keep checking the cameras.",
-
-    "Harley might move around during the night.",
-
-    "Use the lights to check the hallways.",
-
-    "And remember... the doors use power.",
-
-    "Survive until 6 AM and you get your sleepover.",
-
-    "Good luck."
-
+const callLines = [
+  "Hey... hello? Can you hear me?",
+  "You're staying at Harley's house tonight for a sleepover.",
+  "All you have to do is make it to six in the morning.",
+  "There's just one problem. Harley's family is still awake.",
+  "If you see his mom, his dad, or his little brother moving around, keep track of where they go.",
+  "Use the hallway lights to check outside the doors.",
+  "If one of them reaches your hallway, close the door before they get inside.",
+  "And watch the power. You don't want the house going completely dark.",
+  "Good luck. I'll talk to you later."
 ];
 
 
-// ============================================
-// START NIGHT
-// ============================================
-
-$("startButton").addEventListener(
-    "click",
-    startNight
-);
-
+/* =========================
+   START NIGHT
+========================= */
 
 function startNight() {
 
-    gameRunning = true;
+  running = true;
 
-    power = 100;
+  power = 100;
+  seconds = 0;
+  hour = 0;
 
-    seconds = 0;
+  monsterPosition = 1;
+  monsterName = randomFamily();
 
-    hour = 0;
+  leftDoorClosed = false;
+  rightDoorClosed = false;
 
-    harleyPosition = 1;
+  leftLightOn = false;
+  rightLightOn = false;
 
-    leftDoorClosed = false;
-
-    rightDoorClosed = false;
-
-    leftLightOn = false;
-
-    rightLightOn = false;
-
-    camerasOpen = false;
-
-    currentCamera = 1;
+  camerasOpen = false;
+  currentCamera = 1;
 
 
-    $("menu").classList.add("hidden");
+  $("menu").classList.add("hidden");
 
-    $("game").classList.remove("hidden");
+  $("game").classList.remove("hidden");
 
-    $("cameraScreen").classList.add("hidden");
+  $("gameOver").classList.add("hidden");
 
-    $("phone").classList.remove("hidden");
+  $("jumpscare").classList.add("hidden");
 
-
-    $("leftDoor").classList.remove("closed");
-
-    $("rightDoor").classList.remove("closed");
+  $("cameraScreen").classList.add("hidden");
 
 
-    $("leftHall").classList.remove("lightOn");
+  $("leftDoor").classList.remove("closed");
 
-    $("rightHall").classList.remove("lightOn");
-
-
-    startPhoneCall();
+  $("rightDoor").classList.remove("closed");
 
 
-    // One real minute = roughly one in-game hour.
-    // Change 60,000 to make the night faster/slower.
+  $("leftHall").classList.remove("lightOn");
 
-    gameTimer = setInterval(
-        gameTick,
-        1000
-    );
+  $("rightHall").classList.remove("lightOn");
 
 
-    // Harley checks for movement every 3 seconds.
+  update();
 
-    movementTimer = setInterval(
-        tryMoveHarley,
-        3000
-    );
+  startCall();
 
 
-    updateEverything();
+  /*
+    Every 1 second = game time.
+    45 seconds = 1 in-game hour.
+  */
 
+  clockTimer = setInterval(tick, 1000);
+
+
+  /*
+    Family tries to move every 3 seconds.
+  */
+
+  moveTimer = setInterval(tryMove, 3000);
 }
 
 
-// ============================================
-// PHONE CALL
-// ============================================
+/* START BUTTON */
 
-function startPhoneCall() {
-
-    callIndex = 0;
-
-    $("phoneText").textContent =
-        callMessages[0];
+$("startButton").addEventListener(
+  "click",
+  startNight
+);
 
 
-    callTimer = setInterval(
+/* =========================
+   PHONE CALL
+========================= */
 
-        function () {
+function startCall() {
 
-            callIndex++;
+  $("callOverlay").classList.remove("hidden");
 
-
-            if (
-                callIndex >=
-                callMessages.length
-            ) {
-
-                finishPhoneCall();
-
-                return;
-
-            }
+  $("ringText").textContent =
+    "☎ INCOMING CALL...";
 
 
-            $("phoneText").textContent =
-                callMessages[callIndex];
+  ringPhone();
 
-        },
 
-        2800
+  setTimeout(() => {
 
-    );
+    if (!running) return;
 
+
+    let i = 0;
+
+    speak(callLines[i++]);
+
+
+    callTimer = setInterval(() => {
+
+      if (!running) return;
+
+
+      if (i >= callLines.length) {
+
+        finishCall();
+
+        return;
+      }
+
+
+      speak(callLines[i++]);
+
+
+    }, 4200);
+
+
+  }, 2200);
 }
 
+
+/* STOP PHONE CALL */
+
+function finishCall() {
+
+  clearInterval(callTimer);
+
+  $("callOverlay").classList.add("hidden");
+
+
+  if ("speechSynthesis" in window) {
+
+    speechSynthesis.cancel();
+
+  }
+}
+
+
+/* SKIP CALL */
 
 $("skipCall").addEventListener(
-    "click",
-    finishPhoneCall
+  "click",
+  finishCall
 );
 
 
-function finishPhoneCall() {
+/* =========================
+   SPEECH
+========================= */
 
-    clearInterval(callTimer);
+function speak(text) {
 
-    $("phone").classList.add("hidden");
+  $("callText").textContent = text;
 
+
+  if (!("speechSynthesis" in window)) {
+
+    return;
+
+  }
+
+
+  speechSynthesis.cancel();
+
+
+  const voice =
+    new SpeechSynthesisUtterance(text);
+
+
+  voice.rate = 0.88;
+
+  voice.pitch = 0.72;
+
+  voice.volume = 1;
+
+
+  const voices =
+    speechSynthesis.getVoices();
+
+
+  voice.voice =
+    voices.find(v =>
+      /en-US/i.test(v.lang)
+    ) ||
+    voices.find(v =>
+      /^en/i.test(v.lang)
+    ) ||
+    null;
+
+
+  speechSynthesis.speak(voice);
 }
 
 
-// ============================================
-// GAME CLOCK
-// ============================================
+/* =========================
+   PHONE RING SOUND
+========================= */
 
-function gameTick() {
+function ringPhone() {
 
-    if (!gameRunning)
-        return;
-
-
-    seconds++;
-
-
-    // 45 seconds = 1 in-game hour.
-
-    hour =
-        Math.min(
-            6,
-            Math.floor(seconds / 45)
-        );
+  tone(
+    720,
+    0.18,
+    "sine",
+    0.09
+  );
 
 
-    // ========================================
-    // POWER USAGE
-    // ========================================
+  setTimeout(() => {
 
-    let drain = 0.045;
+    tone(
+      520,
+      0.18,
+      "sine",
+      0.09
+    );
 
-
-    if (leftDoorClosed)
-        drain += 0.065;
-
-
-    if (rightDoorClosed)
-        drain += 0.065;
+  }, 230);
 
 
-    if (leftLightOn)
-        drain += 0.045;
+  setTimeout(() => {
+
+    tone(
+      720,
+      0.18,
+      "sine",
+      0.09
+    );
+
+  }, 460);
 
 
-    if (rightLightOn)
-        drain += 0.045;
+  setTimeout(() => {
+
+    tone(
+      520,
+      0.18,
+      "sine",
+      0.09
+    );
+
+  }, 690);
 
 
-    if (camerasOpen)
-        drain += 0.035;
+  setTimeout(() => {
 
+    tone(
+      720,
+      0.18,
+      "sine",
+      0.09
+    );
 
-    power -= drain;
-
-
-    if (power < 0)
-        power = 0;
-
-
-    updateEverything();
-
-
-    // ========================================
-    // POWER FAILURE
-    // ========================================
-
-    if (power <= 0) {
-
-        powerFailure();
-
-        return;
-
-    }
-
-
-    // ========================================
-    // 6 AM
-    // ========================================
-
-    if (hour >= 6) {
-
-        surviveNight();
-
-    }
-
+  }, 920);
 }
 
 
-// ============================================
-// HARLEY AI
-// ============================================
+/* =========================
+   GAME CLOCK
+========================= */
 
-function tryMoveHarley() {
+function tick() {
 
-    if (!gameRunning)
-        return;
+  if (!running) return;
 
 
-    /*
-        Harley becomes more aggressive
-        as the night gets later.
-    */
+  seconds++;
 
-    let chance =
-        0.40 +
-        hour * 0.07;
 
+  /*
+    45 real seconds = 1 game hour.
+  */
 
-    if (chance > 0.82)
-        chance = 0.82;
-
-
-    if (
-        Math.random() >
-        chance
-    ) {
-
-        return;
-
-    }
-
-
-    moveHarley();
-
-}
-
-
-// ============================================
-// HARLEY MOVEMENT
-// ============================================
-
-function moveHarley() {
-
-    // 1 = Living Room
-    // 2 = Kitchen
-    // 3 = Bedroom
-    // 4 = Left Hall
-    // 5 = Right Hall
-
-
-    if (
-        harleyPosition === 1
-    ) {
-
-        harleyPosition = 2;
-
-        playSound("move");
-
-    }
-
-
-    else if (
-        harleyPosition === 2
-    ) {
-
-        harleyPosition = 3;
-
-        playSound("move");
-
-    }
-
-
-    else if (
-        harleyPosition === 3
-    ) {
-
-        if (
-            Math.random() < 0.5
-        ) {
-
-            harleyPosition = 4;
-
-        }
-
-        else {
-
-            harleyPosition = 5;
-
-        }
-
-
-        playSound("move");
-
-    }
-
-
-    else if (
-        harleyPosition === 4
-    ) {
-
-        // LEFT DOOR
-
-        if (
-            leftDoorClosed
-        ) {
-
-            harleyPosition = 2;
-
-            playSound("blocked");
-
-        }
-
-        else {
-
-            jumpscare(
-                "Harley got through the left door."
-            );
-
-            return;
-
-        }
-
-    }
-
-
-    else if (
-        harleyPosition === 5
-    ) {
-
-        // RIGHT DOOR
-
-        if (
-            rightDoorClosed
-        ) {
-
-            harleyPosition = 2;
-
-            playSound("blocked");
-
-        }
-
-        else {
-
-            jumpscare(
-                "Harley got through the right door."
-            );
-
-            return;
-
-        }
-
-    }
-
-
-    updateEverything();
-
-}
-
-
-// ============================================
-// LEFT DOOR
-// ============================================
-
-$("leftDoorButton").addEventListener(
-
-    "click",
-
-    function () {
-
-        if (
-            !gameRunning ||
-            power <= 0
-        )
-            return;
-
-
-        leftDoorClosed =
-            !leftDoorClosed;
-
-
-        $("leftDoor")
-            .classList
-            .toggle(
-                "closed",
-                leftDoorClosed
-            );
-
-
-        playSound("door");
-
-    }
-
-);
-
-
-// ============================================
-// RIGHT DOOR
-// ============================================
-
-$("rightDoorButton").addEventListener(
-
-    "click",
-
-    function () {
-
-        if (
-            !gameRunning ||
-            power <= 0
-        )
-            return;
-
-
-        rightDoorClosed =
-            !rightDoorClosed;
-
-
-        $("rightDoor")
-            .classList
-            .toggle(
-                "closed",
-                rightDoorClosed
-            );
-
-
-        playSound("door");
-
-    }
-
-);
-
-
-// ============================================
-// LEFT LIGHT
-// ============================================
-
-$("leftLight").addEventListener(
-
-    "click",
-
-    function () {
-
-        if (
-            !gameRunning ||
-            power <= 0
-        )
-            return;
-
-
-        leftLightOn =
-            !leftLightOn;
-
-
-        $("leftHall")
-            .classList
-            .toggle(
-                "lightOn",
-                leftLightOn
-            );
-
-
-        updateHallLights();
-
-        playSound("light");
-
-    }
-
-);
-
-
-// ============================================
-// RIGHT LIGHT
-// ============================================
-
-$("rightLight").addEventListener(
-
-    "click",
-
-    function () {
-
-        if (
-            !gameRunning ||
-            power <= 0
-        )
-            return;
-
-
-        rightLightOn =
-            !rightLightOn;
-
-
-        $("rightHall")
-            .classList
-            .toggle(
-                "lightOn",
-                rightLightOn
-            );
-
-
-        updateHallLights();
-
-        playSound("light");
-
-    }
-
-);
-
-
-// ============================================
-// CAMERA BUTTON
-// ============================================
-
-$("cameraButton").addEventListener(
-
-    "click",
-
-    function () {
-
-        if (
-            !gameRunning ||
-            power <= 0
-        )
-            return;
-
-
-        camerasOpen = true;
-
-
-        $("cameraScreen")
-            .classList
-            .remove("hidden");
-
-
-        playSound("camera");
-
-
-        updateCamera();
-
-    }
-
-);
-
-
-// ============================================
-// LOWER CAMERA
-// ============================================
-
-$("closeCamera").addEventListener(
-
-    "click",
-
-    function () {
-
-        camerasOpen = false;
-
-
-        $("cameraScreen")
-            .classList
-            .add("hidden");
-
-
-        playSound("camera");
-
-    }
-
-);
-
-
-// ============================================
-// CAMERA BUTTONS
-// ============================================
-
-document
-    .querySelectorAll(
-        ".camera-map button"
-    )
-    .forEach(
-
-        function (button) {
-
-            button.addEventListener(
-
-                "click",
-
-                function () {
-
-                    currentCamera =
-                        Number(
-                            button.dataset.camera
-                        );
-
-
-                    playSound("static");
-
-
-                    updateCamera();
-
-                }
-
-            );
-
-        }
-
+  hour =
+    Math.min(
+      6,
+      Math.floor(seconds / 45)
     );
 
 
-// ============================================
-// UPDATE CAMERA
-// ============================================
+  /* POWER USAGE */
 
-function updateCamera() {
-
-    $("cameraTitle")
-        .textContent =
-        rooms[currentCamera];
+  let drain = 0.045;
 
 
-    /*
-        Harley is only visible
-        on the camera he's currently in.
-    */
-
-    if (
-        harleyPosition ===
-        currentCamera
-    ) {
-
-        $("cameraHarley")
-            .classList
-            .remove("hidden");
-
-    }
-
-    else {
-
-        $("cameraHarley")
-            .classList
-            .add("hidden");
-
-    }
+  if (leftDoorClosed)
+    drain += 0.065;
 
 
-    /*
-        Change the room layout.
-    */
+  if (rightDoorClosed)
+    drain += 0.065;
 
-    $("cameraRoom").className =
-        "camera-room cam" +
-        currentCamera;
 
+  if (leftLightOn)
+    drain += 0.045;
+
+
+  if (rightLightOn)
+    drain += 0.045;
+
+
+  if (camerasOpen)
+    drain += 0.035;
+
+
+  power =
+    Math.max(
+      0,
+      power - drain
+    );
+
+
+  update();
+
+
+  if (power <= 0) {
+
+    powerOut();
+
+    return;
+
+  }
+
+
+  if (hour >= 6) {
+
+    win();
+
+  }
 }
 
 
-// ============================================
-// HALL LIGHTS
-// ============================================
+/* =========================
+   MONSTER MOVEMENT
+========================= */
 
-function updateHallLights() {
+function tryMove() {
 
-    const leftHarley =
-        $("leftHarley");
-
-    const rightHarley =
-        $("rightHarley");
+  if (!running) return;
 
 
-    if (
-        leftLightOn &&
-        harleyPosition === 4
-    ) {
+  /*
+    Monsters become more aggressive
+    as the night gets later.
+  */
 
-        leftHarley
-            .classList
-            .remove("hidden");
-
-    }
-
-    else {
-
-        leftHarley
-            .classList
-            .add("hidden");
-
-    }
+  const chance =
+    Math.min(
+      0.90,
+      0.42 + hour * 0.08
+    );
 
 
-    if (
-        rightLightOn &&
-        harleyPosition === 5
-    ) {
+  if (Math.random() > chance)
+    return;
 
-        rightHarley
-            .classList
-            .remove("hidden");
 
-    }
-
-    else {
-
-        rightHarley
-            .classList
-            .add("hidden");
-
-    }
-
+  moveMonster();
 }
 
 
-// ============================================
-// UPDATE EVERYTHING
-// ============================================
+/* PICK FAMILY MEMBER */
 
-function updateEverything() {
+function randomFamily() {
 
-    let displayHour =
-        hour === 0
-            ? "12"
-            : hour;
+  const r = Math.random();
 
 
-    $("time")
-        .textContent =
-        displayHour + " AM";
+  if (r < 0.40)
+    return "Mom";
 
 
-    $("power")
-        .textContent =
-        "POWER: " +
-        Math.floor(power) +
-        "%";
+  if (r < 0.72)
+    return "Dad";
 
 
-    updateCamera();
+  return "Little Brother";
+}
+
+
+/* MOVE FAMILY MEMBER */
+
+function moveMonster() {
+
+
+  /*
+    1 = Living Room
+    2 = Kitchen
+    3 = Bedroom
+    4 = Left Hall
+    5 = Right Hall
+  */
+
+
+  if (monsterPosition === 1) {
+
+    monsterPosition = 2;
+
+    monsterName = randomFamily();
+
+    sound("move");
+
+  }
+
+
+  else if (monsterPosition === 2) {
+
+    monsterPosition = 3;
+
+    sound("move");
+
+  }
+
+
+  else if (monsterPosition === 3) {
+
+    monsterPosition =
+      Math.random() < 0.5
+        ? 4
+        : 5;
+
+    sound("move");
+
+  }
+
+
+  else if (monsterPosition === 4) {
+
+
+    if (leftDoorClosed) {
+
+      /*
+        Door blocks them.
+      */
+
+      monsterPosition = 2;
+
+      sound("blocked");
+
+    }
+
+    else {
+
+      jumpscare(
+        monsterName +
+        " got through the left door."
+      );
+
+      return;
+
+    }
+
+  }
+
+
+  else if (monsterPosition === 5) {
+
+
+    if (rightDoorClosed) {
+
+      monsterPosition = 2;
+
+      sound("blocked");
+
+    }
+
+    else {
+
+      jumpscare(
+        monsterName +
+        " got through the right door."
+      );
+
+      return;
+
+    }
+
+  }
+
+
+  update();
+}
+
+
+/* =========================
+   LEFT DOOR
+========================= */
+
+$("leftDoorBtn").addEventListener(
+  "click",
+  () => {
+
+    if (!running || power <= 0)
+      return;
+
+
+    leftDoorClosed =
+      !leftDoorClosed;
+
+
+    $("leftDoor")
+      .classList.toggle(
+        "closed",
+        leftDoorClosed
+      );
+
+
+    sound("door");
+
+  }
+);
+
+
+/* =========================
+   RIGHT DOOR
+========================= */
+
+$("rightDoorBtn").addEventListener(
+  "click",
+  () => {
+
+    if (!running || power <= 0)
+      return;
+
+
+    rightDoorClosed =
+      !rightDoorClosed;
+
+
+    $("rightDoor")
+      .classList.toggle(
+        "closed",
+        rightDoorClosed
+      );
+
+
+    sound("door");
+
+  }
+);
+
+
+/* =========================
+   LEFT LIGHT
+========================= */
+
+$("leftLight").addEventListener(
+  "click",
+  () => {
+
+    if (!running || power <= 0)
+      return;
+
+
+    leftLightOn =
+      !leftLightOn;
+
+
+    $("leftHall")
+      .classList.toggle(
+        "lightOn",
+        leftLightOn
+      );
+
 
     updateHallLights();
 
+    sound("light");
+
+  }
+);
+
+
+/* =========================
+   RIGHT LIGHT
+========================= */
+
+$("rightLight").addEventListener(
+  "click",
+  () => {
+
+    if (!running || power <= 0)
+      return;
+
+
+    rightLightOn =
+      !rightLightOn;
+
+
+    $("rightHall")
+      .classList.toggle(
+        "lightOn",
+        rightLightOn
+      );
+
+
+    updateHallLights();
+
+    sound("light");
+
+  }
+);
+
+
+/* =========================
+   OPEN CAMERAS
+========================= */
+
+$("cameraBtn").addEventListener(
+  "click",
+  () => {
+
+    if (!running || power <= 0)
+      return;
+
+
+    camerasOpen = true;
+
+
+    $("cameraScreen")
+      .classList.remove(
+        "hidden"
+      );
+
+
+    sound("camera");
+
+    updateCamera();
+
+  }
+);
+
+
+/* LOWER CAMERA */
+
+$("lowerCamera").addEventListener(
+  "click",
+  () => {
+
+    camerasOpen = false;
+
+
+    $("cameraScreen")
+      .classList.add(
+        "hidden"
+      );
+
+
+    sound("camera");
+
+  }
+);
+
+
+/* CAMERA BUTTONS */
+
+document
+  .querySelectorAll("[data-camera]")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        currentCamera =
+          Number(
+            button.dataset.camera
+          );
+
+
+        sound("static");
+
+        updateCamera();
+
+      }
+    );
+
+  });
+
+
+/* =========================
+   CAMERA UPDATE
+========================= */
+
+function updateCamera() {
+
+  $("cameraTitle")
+    .textContent =
+    rooms[currentCamera];
+
+
+  $("cameraRoom")
+    .className =
+    "camera-room cam" +
+    currentCamera;
+
+
+  /*
+    Only show monster if
+    camera matches location.
+  */
+
+  $("cameraMonster")
+    .classList.toggle(
+      "hidden",
+      monsterPosition !== currentCamera
+    );
 }
 
 
-// ============================================
-// STOP TIMERS
-// ============================================
+/* =========================
+   HALLWAY LIGHTS
+========================= */
+
+function updateHallLights() {
+
+  $("leftMonster")
+    .classList.toggle(
+      "hidden",
+      !(
+        leftLightOn &&
+        monsterPosition === 4
+      )
+    );
+
+
+  $("rightMonster")
+    .classList.toggle(
+      "hidden",
+      !(
+        rightLightOn &&
+        monsterPosition === 5
+      )
+    );
+}
+
+
+/* =========================
+   HUD
+========================= */
+
+function update() {
+
+  $("time").textContent =
+    (hour === 0 ? "12" : hour) +
+    " AM";
+
+
+  $("power").textContent =
+    "POWER: " +
+    Math.floor(power) +
+    "%";
+
+
+  updateCamera();
+
+  updateHallLights();
+}
+
+
+/* =========================
+   STOP TIMERS
+========================= */
 
 function stopTimers() {
 
-    clearInterval(
-        gameTimer
-    );
+  clearInterval(clockTimer);
 
-    clearInterval(
-        movementTimer
-    );
+  clearInterval(moveTimer);
 
-    clearInterval(
-        callTimer
-    );
-
+  clearInterval(callTimer);
 }
 
 
-// ============================================
-// JUMPSCARE
-// ============================================
+/* =========================
+   JUMPSCARE
+========================= */
 
 function jumpscare(reason) {
 
-    if (!gameRunning)
-        return;
+  if (!running)
+    return;
 
 
-    gameRunning = false;
+  running = false;
+
+  stopTimers();
+
+  finishCall();
 
 
-    stopTimers();
+  $("game")
+    .classList.add("hidden");
 
 
-    $("game")
-        .classList
-        .add("hidden");
+  $("jumpscare")
+    .classList.remove("hidden");
 
 
-    $("cameraScreen")
-        .classList
-        .add("hidden");
+  sound("jumpscare");
 
 
-    $("phone")
-        .classList
-        .add("hidden");
-
+  setTimeout(() => {
 
     $("jumpscare")
-        .classList
-        .remove("hidden");
-
-
-    playSound("jumpscare");
-
-
-    setTimeout(
-
-        function () {
-
-            $("jumpscare")
-                .classList
-                .add("hidden");
-
-
-            $("gameOver")
-                .classList
-                .remove("hidden");
-
-
-            $("gameOverTitle")
-                .textContent =
-                "GAME OVER";
-
-
-            $("gameOverText")
-                .textContent =
-                reason;
-
-        },
-
-        1700
-
-    );
-
-}
-
-
-// ============================================
-// POWER FAILURE
-// ============================================
-
-function powerFailure() {
-
-    gameRunning = false;
-
-    stopTimers();
-
-
-    $("game")
-        .classList
-        .add("hidden");
-
-
-    $("cameraScreen")
-        .classList
-        .add("hidden");
-
-
-    $("phone")
-        .classList
-        .add("hidden");
+      .classList.add("hidden");
 
 
     $("gameOver")
-        .classList
-        .remove("hidden");
+      .classList.remove("hidden");
 
 
-    $("gameOverTitle")
-        .textContent =
-        "POWER OUT";
+    $("resultTitle")
+      .textContent =
+      "GAME OVER";
 
 
-    $("gameOverText")
-        .textContent =
-        "The power ran out...";
+    $("resultText")
+      .textContent =
+      reason;
 
+
+  }, 1450);
 }
 
 
-// ============================================
-// SURVIVED
-// ============================================
+/* =========================
+   POWER OUT
+========================= */
 
-function surviveNight() {
+function powerOut() {
 
-    gameRunning = false;
+  running = false;
 
-    stopTimers();
+  stopTimers();
 
-
-    $("game")
-        .classList
-        .add("hidden");
+  finishCall();
 
 
-    $("cameraScreen")
-        .classList
-        .add("hidden");
+  $("game")
+    .classList.add("hidden");
 
 
-    $("gameOver")
-        .classList
-        .remove("hidden");
+  $("gameOver")
+    .classList.remove("hidden");
 
 
-    $("gameOverTitle")
-        .textContent =
-        "6 AM";
+  $("resultTitle")
+    .textContent =
+    "POWER OUT";
 
 
-    $("gameOverText")
-        .textContent =
-        "YOU SURVIVED! THE SLEEPOVER CAN BEGIN!";
-
+  $("resultText")
+    .textContent =
+    "The house goes completely dark...";
 }
 
 
-// ============================================
-// SOUND SYSTEM
-// ============================================
+/* =========================
+   WIN
+========================= */
+
+function win() {
+
+  running = false;
+
+  stopTimers();
+
+  finishCall();
+
+
+  $("game")
+    .classList.add("hidden");
+
+
+  $("gameOver")
+    .classList.remove("hidden");
+
+
+  $("resultTitle")
+    .textContent =
+    "6 AM";
+
+
+  $("resultText")
+    .textContent =
+    "YOU SURVIVED. THE SLEEPOVER CAN BEGIN!";
+}
+
+
+/* =========================
+   AUDIO ENGINE
+========================= */
 
 let audioContext = null;
 
 
-function getAudio() {
+function audio() {
 
-    if (!audioContext) {
+  if (!audioContext) {
 
-        audioContext =
-            new (
-                window.AudioContext ||
-                window.webkitAudioContext
-            )();
+    audioContext =
+      new (
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
 
-    }
-
-
-    if (
-        audioContext.state ===
-        "suspended"
-    ) {
-
-        audioContext.resume();
-
-    }
+  }
 
 
-    return audioContext;
+  if (
+    audioContext.state ===
+    "suspended"
+  ) {
 
+    audioContext.resume();
+
+  }
+
+
+  return audioContext;
 }
 
+
+/* CREATE SOUND */
 
 function tone(
-    frequency,
-    duration,
-    type = "square",
-    volume = 0.05
+  frequency,
+  duration,
+  type = "square",
+  volume = 0.05
 ) {
 
-    try {
+  try {
 
-        const audio =
-            getAudio();
+    const a = audio();
 
+    const oscillator =
+      a.createOscillator();
 
-        const oscillator =
-            audio.createOscillator();
-
-
-        const gain =
-            audio.createGain();
+    const gain =
+      a.createGain();
 
 
-        oscillator.type =
-            type;
+    oscillator.type = type;
+
+    oscillator.frequency.value =
+      frequency;
 
 
-        oscillator.frequency.value =
-            frequency;
+    gain.gain.value =
+      volume;
 
 
-        gain.gain.value =
-            volume;
+    oscillator.connect(gain);
+
+    gain.connect(
+      a.destination
+    );
 
 
-        oscillator.connect(
-            gain
-        );
+    oscillator.start();
 
 
-        gain.connect(
-            audio.destination
-        );
+    gain.gain.exponentialRampToValueAtTime(
+      0.001,
+      a.currentTime + duration
+    );
 
 
-        oscillator.start();
+    oscillator.stop(
+      a.currentTime + duration
+    );
 
+  }
 
-        gain.gain
-            .exponentialRampToValueAtTime(
-                0.001,
-                audio.currentTime +
-                duration
-            );
+  catch (error) {
 
+    console.log(
+      "Audio unavailable."
+    );
 
-        oscillator.stop(
-            audio.currentTime +
-            duration
-        );
-
-    }
-
-    catch (error) {
-
-        console.log(
-            "Audio unavailable"
-        );
-
-    }
-
+  }
 }
 
 
-// ============================================
-// SOUND EFFECTS
-// ============================================
+/* =========================
+   GAME SOUNDS
+========================= */
 
-function playSound(type) {
-
-    if (
-        type === "door"
-    ) {
-
-        tone(
-            80,
-            0.2,
-            "sawtooth",
-            0.08
-        );
-
-    }
+function sound(type) {
 
 
-    else if (
-        type === "light"
-    ) {
+  /* Door */
 
-        tone(
-            550,
-            0.08,
-            "square",
-            0.04
-        );
+  if (type === "door") {
 
-    }
+    tone(
+      70,
+      0.22,
+      "sawtooth",
+      0.09
+    );
 
 
-    else if (
-        type === "camera"
-    ) {
+    setTimeout(() => {
 
-        tone(
-            260,
-            0.1,
-            "square",
-            0.04
-        );
+      tone(
+        45,
+        0.16,
+        "square",
+        0.05
+      );
 
+    }, 100);
 
-        setTimeout(
-
-            function () {
-
-                tone(
-                    150,
-                    0.12,
-                    "square",
-                    0.03
-                );
-
-            },
-
-            70
-
-        );
-
-    }
+  }
 
 
-    else if (
-        type === "static"
-    ) {
+  /* Light */
 
-        tone(
-            1200,
-            0.05,
-            "sawtooth",
-            0.025
-        );
+  if (type === "light") {
 
-    }
+    tone(
+      540,
+      0.08,
+      "square",
+      0.04
+    );
 
-
-    else if (
-        type === "move"
-    ) {
-
-        tone(
-            65,
-            0.25,
-            "sine",
-            0.06
-        );
-
-    }
+  }
 
 
-    else if (
-        type === "blocked"
-    ) {
+  /* Camera */
 
-        tone(
-            45,
-            0.3,
-            "sawtooth",
-            0.08
-        );
+  if (type === "camera") {
 
-    }
+    tone(
+      280,
+      0.10,
+      "square",
+      0.05
+    );
 
 
-    else if (
-        type === "jumpscare"
-    ) {
+    setTimeout(() => {
 
-        tone(
-            45,
-            0.8,
-            "sawtooth",
-            0.2
-        );
+      tone(
+        150,
+        0.12,
+        "square",
+        0.03
+      );
+
+    }, 80);
+
+  }
 
 
-        setTimeout(
+  /* Static */
 
-            function () {
+  if (type === "static") {
 
-                tone(
-                    900,
-                    0.5,
-                    "square",
-                    0.15
-                );
+    tone(
+      1250,
+      0.06,
+      "sawtooth",
+      0.025
+    );
 
-            },
+  }
 
-            100
 
-        );
+  /* Monster movement */
 
-    }
+  if (type === "move") {
 
+    tone(
+      80,
+      0.16,
+      "sine",
+      0.07
+    );
+
+
+    setTimeout(() => {
+
+      tone(
+        55,
+        0.18,
+        "sine",
+        0.05
+      );
+
+    }, 120);
+
+  }
+
+
+  /* Door blocks monster */
+
+  if (type === "blocked") {
+
+    tone(
+      48,
+      0.32,
+      "sawtooth",
+      0.09
+    );
+
+  }
+
+
+  /* Jumpscare */
+
+  if (type === "jumpscare") {
+
+    tone(
+      55,
+      0.8,
+      "sawtooth",
+      0.22
+    );
+
+
+    setTimeout(() => {
+
+      tone(
+        980,
+        0.5,
+        "square",
+        0.16
+      );
+
+    }, 70);
+
+
+    setTimeout(() => {
+
+      tone(
+        180,
+        0.55,
+        "sawtooth",
+        0.13
+      );
+
+    }, 150);
+
+  }
 }
 
 
-// ============================================
-// INITIALIZE
-// ============================================
+/* INITIAL HUD */
 
-updateEverything();
+update();
