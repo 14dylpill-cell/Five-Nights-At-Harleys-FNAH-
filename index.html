@@ -1,172 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Five Nights at Harley's</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Five Nights at Harley's</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div id="menu">
-    <h1>FIVE NIGHTS<br>AT HARLEY'S</h1>
-    <h2>NIGHT 1</h2>
+  <div id="menu">
+    <div class="menu-content">
+      <p>HARLEY'S HOUSE</p>
+      <h1>FIVE NIGHTS<br>AT HARLEY'S</h1>
 
-    <button id="startButton">START NIGHT</button>
+      <h2>NIGHT 1</h2>
 
-    <p>Survive until 6 AM.</p>
-</div>
+      <button id="startButton">START NIGHT</button>
 
+      <small>Survive until 6 AM.</small>
+    </div>
+  </div>
 
-<div id="game" class="hidden">
+  <div id="game" class="hidden">
 
     <div id="office">
 
-        <div class="office-wall"></div>
+      <div class="office-wall">
+        <div class="ceiling-light"></div>
+        <div class="window"></div>
+        <div class="picture"></div>
 
-        <div id="leftHall" class="hall left-hall">
-            <div id="leftHarley" class="harley hidden"></div>
+        <div class="desk">
+          <div class="monitor"></div>
+          <div class="phone"></div>
+          <div class="lamp"></div>
         </div>
+      </div>
 
-        <div id="rightHall" class="hall right-hall">
-            <div id="rightHarley" class="harley hidden"></div>
-        </div>
+      <div id="leftHall" class="hall left-hall">
+        <div id="leftMonster" class="monster hidden"></div>
+      </div>
 
-        <div class="desk"></div>
+      <div id="rightHall" class="hall right-hall">
+        <div id="rightMonster" class="monster hidden"></div>
+      </div>
 
-        <div id="leftDoor" class="door left-door"></div>
-        <div id="rightDoor" class="door right-door"></div>
+      <div id="leftDoor" class="door left-door"></div>
+      <div id="rightDoor" class="door right-door"></div>
 
-        <div class="hud">
-            <div>NIGHT 1</div>
-            <strong id="time">12 AM</strong>
-            <div id="power">POWER: 100%</div>
-        </div>
+      <div class="hud">
+        <div>NIGHT 1</div>
+        <strong id="time">12 AM</strong>
+        <div id="power">POWER: 100%</div>
+      </div>
 
-        <div class="controls left-controls">
-            <button id="leftLight">LIGHT</button>
-            <button id="leftDoorButton">DOOR</button>
-        </div>
+      <div class="controls left-controls">
+        <button id="leftLight">LIGHT</button>
+        <button id="leftDoorBtn">DOOR</button>
+      </div>
 
-        <div class="controls right-controls">
-            <button id="rightLight">LIGHT</button>
-            <button id="rightDoorButton">DOOR</button>
-        </div>
+      <div class="controls right-controls">
+        <button id="rightLight">LIGHT</button>
+        <button id="rightDoorBtn">DOOR</button>
+      </div>
 
-        <button id="cameraButton" class="camera-button">
-            CAMERAS
-        </button>
+      <button id="cameraBtn" class="camera-button">
+        CAMERAS
+      </button>
 
     </div>
 
+
+    <!-- CAMERA SYSTEM -->
 
     <div id="cameraScreen" class="hidden">
 
-        <div class="camera-title" id="cameraTitle">
-            CAM 1 — LIVING ROOM
+      <div id="cameraTitle">
+        CAM 1 — LIVING ROOM
+      </div>
+
+      <div id="cameraRoom" class="camera-room cam1">
+
+        <div class="room-ceiling"></div>
+        <div class="room-wall"></div>
+        <div class="room-floor"></div>
+
+        <div class="window-room"></div>
+
+        <div class="couch"></div>
+        <div class="table"></div>
+        <div class="tv"></div>
+
+        <div class="counter"></div>
+        <div class="fridge"></div>
+
+        <div class="bed"></div>
+        <div class="nightstand"></div>
+
+        <div class="family-picture"></div>
+
+        <div id="cameraMonster" class="camera-monster hidden">
+          <div class="monster-head"></div>
+          <div class="monster-body"></div>
         </div>
 
-        <div id="cameraRoom" class="camera-room">
-
-            <div class="room-wall"></div>
-            <div class="room-floor"></div>
-
-            <div class="couch"></div>
-            <div class="table"></div>
-            <div class="lamp"></div>
-
-            <div id="cameraHarley" class="camera-harley hidden">
-                <div class="camera-head"></div>
-                <div class="camera-body"></div>
-                <div class="camera-eye eye1"></div>
-                <div class="camera-eye eye2"></div>
-            </div>
-
-        </div>
+      </div>
 
 
-        <div class="camera-map">
+      <div class="camera-map">
 
-            <button data-camera="1">
-                CAM 1
-            </button>
-
-            <button data-camera="2">
-                CAM 2
-            </button>
-
-            <button data-camera="3">
-                CAM 3
-            </button>
-
-            <button data-camera="4">
-                CAM 4
-            </button>
-
-            <button data-camera="5">
-                CAM 5
-            </button>
-
-        </div>
-
-
-        <button id="closeCamera" class="close-camera">
-            LOWER CAMERA
+        <button data-camera="1">
+          CAM 1<br>
+          Living Room
         </button>
 
+        <button data-camera="2">
+          CAM 2<br>
+          Kitchen
+        </button>
+
+        <button data-camera="3">
+          CAM 3<br>
+          Bedroom
+        </button>
+
+        <button data-camera="4">
+          CAM 4<br>
+          Left Hall
+        </button>
+
+        <button data-camera="5">
+          CAM 5<br>
+          Right Hall
+        </button>
+
+      </div>
+
+      <button id="lowerCamera">
+        LOWER CAMERA
+      </button>
+
     </div>
 
 
-    <div id="phone" class="hidden">
+    <!-- PHONE CALL -->
 
-        <div class="phone-box">
+    <div id="callOverlay" class="hidden">
 
-            <h2>INCOMING CALL</h2>
+      <div class="call-box">
 
-            <p id="phoneText"></p>
-
-            <button id="skipCall">
-                SKIP
-            </button>
-
+        <div id="ringText">
+          ☎ INCOMING CALL...
         </div>
 
+        <h2>UNKNOWN CALLER</h2>
+
+        <p id="callText"></p>
+
+        <button id="skipCall">
+          SKIP CALL
+        </button>
+
+      </div>
+
     </div>
 
-</div>
+  </div>
 
 
-<div id="jumpscare" class="hidden">
+  <!-- JUMPSCARE -->
+
+  <div id="jumpscare" class="hidden">
 
     <div class="scare">
 
-        <div class="scare-eye eye-left"></div>
-        <div class="scare-eye eye-right"></div>
+      <div class="scare-head">
 
-        <div class="scare-mouth"></div>
+        <div class="scare-eye"></div>
+        <div class="scare-eye"></div>
+
+      </div>
+
+      <div class="scare-body"></div>
+
+      <div class="scare-mouth"></div>
 
     </div>
 
-</div>
+  </div>
 
 
-<div id="gameOver" class="hidden">
+  <!-- GAME OVER -->
 
-    <h1 id="gameOverTitle">
-        GAME OVER
+  <div id="gameOver" class="hidden">
+
+    <h1 id="resultTitle">
+      GAME OVER
     </h1>
 
-    <p id="gameOverText"></p>
+    <p id="resultText"></p>
 
     <button onclick="location.reload()">
-        TRY AGAIN
+      TRY AGAIN
     </button>
 
-</div>
+  </div>
 
 
-<script src="game.js"></script>
+  <script src="game.js"></script>
 
 </body>
 </html>
